@@ -21,8 +21,11 @@ public class Team extends Auditor {
     private String name;
     private String logoUrl;
 
+    /*
     @OneToMany(fetch = FetchType.EAGER)
     private List<Player> players;
+
+     */
 
 
 }

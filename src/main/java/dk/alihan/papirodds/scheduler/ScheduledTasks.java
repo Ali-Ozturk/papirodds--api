@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.alihan.papirodds.entity.Contest;
 import dk.alihan.papirodds.entity.Match;
 import dk.alihan.papirodds.entity.Score;
-import dk.alihan.papirodds.entity.UserOdds;
+import dk.alihan.papirodds.entity.UserPrediction;
 import dk.alihan.papirodds.repository.ContestRepository;
 import dk.alihan.papirodds.repository.MatchRepository;
 import dk.alihan.papirodds.repository.UserOddsRepository;
@@ -68,13 +68,13 @@ public class ScheduledTasks {
                         // Match has concluded
                         log.info("Match has concluded");
 
-                        Optional<List<UserOdds>> allOdds = userOddsRepository.findAllByOddsMatchId(match.getId());
+                        Optional<List<UserPrediction>> allOdds = userOddsRepository.findAllByOddsMapMatchMatchId(match.getId());
 
                         if (allOdds.isPresent()) {
                             System.out.println(allOdds.get());
 
                             // Iterate through all odds and update scores when correct vs. not correct
-                            for (UserOdds odds : allOdds.get()) {
+                            for (UserPrediction odds : allOdds.get()) {
                                 double threshold = odds.getOdds().getThreshold();
                                 long oddsPlayerId = odds.getOdds().getPlayer().getId();
                                 boolean correctPrediction = false; // Default value

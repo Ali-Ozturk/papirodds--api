@@ -40,7 +40,7 @@ public class ThresholdService {
 
         List<PlayerMatchThresholdsDTO> dtos = new ArrayList<>();
 
-        List<PlayerMatchThreshold> thresholds = playerMatchThresholdRepository.findAllByMatchId(id);
+        List<PlayerMatchThreshold> thresholds = playerMatchThresholdRepository.findAllByMapMatchMatchId(id);
         for (PlayerMatchThreshold threshold : thresholds) {
             dtos.add(new PlayerMatchThresholdsDTO(threshold));
         }
@@ -50,9 +50,7 @@ public class ThresholdService {
 
     public void createThreshold(MapMatch mapMatch, Player player, Double threshold) {
         log.info("Creating threshold");
-
-        PlayerMatchThreshold pmt = playerMatchThresholdRepository.save(new PlayerMatchThreshold(null, threshold, player, mapMatch));
-        new PlayerMatchThresholdsDTO(pmt);
+        playerMatchThresholdRepository.save(new PlayerMatchThreshold(null, threshold, player, mapMatch));
     }
 
     public void createOdds(OddsRequest request) throws Exception {
@@ -61,7 +59,7 @@ public class ThresholdService {
         Optional<User> user = userRepository.findById(request.getUserId());
 
         if (user.isPresent()) {
-            UserOdds odds = new UserOdds(null, request.getThreshold(), user.get(), request.getIsOverThreshold());
+            UserPrediction odds = new UserPrediction(null, request.getThreshold(), request.getMapMatch(), user.get(), request.getIsOverThreshold());
             userOddsRepository.save(odds);
         } else {
             throw new Exception("Could not find user");

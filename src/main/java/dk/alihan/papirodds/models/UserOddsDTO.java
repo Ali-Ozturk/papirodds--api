@@ -1,6 +1,6 @@
 package dk.alihan.papirodds.models;
 
-import dk.alihan.papirodds.entity.UserOdds;
+import dk.alihan.papirodds.entity.UserPrediction;
 import lombok.Data;
 
 @Data
@@ -10,10 +10,10 @@ public class UserOddsDTO {
     private final Boolean overThreshold;
     private final PlayerMatchThresholdsDTO odds;
 
-    public UserOddsDTO(UserOdds userOdds) {
-        this.id = userOdds.getId();
-        this.userId = userOdds.getUser().getId();
-        this.overThreshold = userOdds.getOverThreshold();
-        this.odds = new PlayerMatchThresholdsDTO(userOdds.getOdds());
+    public UserOddsDTO(UserPrediction userPrediction) {
+        this.id = userPrediction.getId();
+        this.userId = userPrediction.getUser().getId();
+        this.overThreshold = userPrediction.getOverThreshold();
+        this.odds = new PlayerMatchThresholdsDTO(userPrediction.getOdds());
     }
 }

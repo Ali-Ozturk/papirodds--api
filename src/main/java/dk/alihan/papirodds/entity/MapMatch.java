@@ -13,7 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "map_matches")
-public class MapMatch {
+public class MapMatch extends Auditor {
     @GeneratedValue
     @Id
     private Long id;
@@ -22,5 +22,6 @@ public class MapMatch {
     private Integer mapNumber;
 
     @ManyToOne
+    @JoinColumn(name = "match_id")
     private Match match;
 }

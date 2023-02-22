@@ -12,13 +12,16 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "user_odds")
-public class UserOdds extends Auditor {
+public class UserPrediction extends Auditor {
     @GeneratedValue
     @Id
     private Long id;
 
     @OneToOne
     private PlayerMatchThreshold odds;
+
+    @OneToOne
+    private MapMatch mapMatch;
 
     @OneToOne
     private User user;

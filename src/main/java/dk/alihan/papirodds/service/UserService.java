@@ -2,7 +2,7 @@ package dk.alihan.papirodds.service;
 
 import dk.alihan.papirodds.models.UserOddsDTO;
 import dk.alihan.papirodds.entity.User;
-import dk.alihan.papirodds.entity.UserOdds;
+import dk.alihan.papirodds.entity.UserPrediction;
 import dk.alihan.papirodds.repository.UserOddsRepository;
 import dk.alihan.papirodds.repository.UserRepository;
 import dk.alihan.papirodds.request.UserValidationRequest;
@@ -37,11 +37,11 @@ public class UserService {
 
 
         List<UserOddsDTO> dtos = new ArrayList<>();
-        Optional<List<UserOdds>> odds = userOddsRepository.findAllByUserId(id);
+        Optional<List<UserPrediction>> odds = userOddsRepository.findAllByUserId(id);
 
         if (odds.isPresent()) {
-            for (UserOdds userOdds : odds.get()) {
-                dtos.add(new UserOddsDTO(userOdds));
+            for (UserPrediction userPrediction : odds.get()) {
+                dtos.add(new UserOddsDTO(userPrediction));
             }
 
             return dtos;

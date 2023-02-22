@@ -1,10 +1,10 @@
 package dk.alihan.papirodds.controller;
 
-import dk.alihan.papirodds.entity.Match;
 import dk.alihan.papirodds.entity.MapMatch;
+import dk.alihan.papirodds.entity.Match;
 import dk.alihan.papirodds.entity.Player;
-import dk.alihan.papirodds.enumtype.MapType;
 import dk.alihan.papirodds.models.MapsAndThresholds;
+import dk.alihan.papirodds.repository.MapMatchRepository;
 import dk.alihan.papirodds.request.NewMatchRequest;
 import dk.alihan.papirodds.service.MatchService;
 import dk.alihan.papirodds.service.PlayerService;
@@ -20,6 +20,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/matches")
@@ -29,6 +30,7 @@ public class MatchController {
     private final TeamService teamService;
     private final PlayerService playerService;
     private final ThresholdService thresholdService;
+    private final MapMatchRepository mapMatchRepository;
 
     @GetMapping
     @ResponseBody
@@ -79,17 +81,18 @@ public class MatchController {
             // Generate list of all players and add them to db
             ArrayList<Player> players = new ArrayList<>() {
                 {
-                    addAll(match.getTeamHome().getPlayers());
-                    addAll(match.getTeamAway().getPlayers());
+                    addAll(match.getPlayersHome());
+                    addAll(match.getPlayersAway());
                 }
             };
-            for (Player player : players) {
-                playerService.createPlayer(player);
-            }
+            playerService.createAll(players);
 
             // Create Teams
             teamService.createTeam(match.getTeamHome());
             teamService.createTeam(match.getTeamAway());
+
+            // Create MapMatches
+            List<MapMatch> savedMapMatches = mapMatchRepository.saveAll(match.getMapMatches());
 
             //TODO: Temp fix for date issues
             match.setStartDate(match.getStartDate().plusHours(1));
@@ -97,21 +100,25 @@ public class MatchController {
             // Create Match
             matchService.createMatch(match);
 
-            int mapsCount = match.getMaps().size();
-
             // Add Maps and Thresholds
-            for (MapsAndThresholds mapsAndThresholds : request.getMapsAndThresholds()) {
-                MapMatch mapMatch = new MapMatch(null, match.getMaps().get(), mapsAndThresholds.getMapNumber(), match);
-                thresholdService.createThreshold(match.getMaps(), player, player.getThreshold());
+            for (MapMatch map : savedMapMatches) {
+                List<MapsAndThresholds> ts = request.getMapsAndThresholds().stream()
+                        .filter(threshold -> Objects.equals(map.getMapNumber(), threshold.getMapNumber()))
+                        .toList();
+
+                for (MapsAndThresholds threshold : ts) {
+                    players.stream()
+                            .filter(p -> p.getId().equals(threshold.getPlayerId()))
+                            .findAny()
+                            .ifPresent(player -> thresholdService.createThreshold(map, player, threshold.getThreshold()));
+                }
             }
-
-
 
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(match);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
 
     }

@@ -38,6 +38,18 @@ public class Match extends Auditor {
     @OneToOne(fetch = FetchType.EAGER)
     private Team teamAway;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<Player> playersHome;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<Player> playersAway;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "match")
+    private List<MapMatch> mapMatches;
+
+    /*
     @ElementCollection
     private List<MapType> maps;
+
+     */
 }

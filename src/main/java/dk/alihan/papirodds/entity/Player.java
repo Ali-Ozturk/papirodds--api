@@ -23,7 +23,11 @@ public class Player extends Auditor {
     @NonNull
     private String nickname;
     private String avatarUrl;
+
+    /*
     @Transient
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Double threshold;
+
+     */
 }

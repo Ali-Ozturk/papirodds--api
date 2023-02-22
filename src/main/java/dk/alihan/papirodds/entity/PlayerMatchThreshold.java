@@ -21,6 +21,6 @@ public class PlayerMatchThreshold extends Auditor {
     @OneToOne(fetch = FetchType.EAGER)
     private Player player;
 
-    @OneToOne
+    @ManyToOne
     private MapMatch mapMatch;
 }
